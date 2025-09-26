@@ -8,7 +8,7 @@ export default function NewsFormScreen({ route, navigation }) {
   const [title, setTitle] = useState(articleToEdit ? articleToEdit.title : "");
   const [image, setImage] = useState(articleToEdit ? articleToEdit.image : "");
   const [description, setDescription] = useState(
-    articleToEdit ? articleToEdit.description : ""
+    articleToEdit ? aarticleToEdit.description : ""
   );
 
   const saveArticle = async () => {

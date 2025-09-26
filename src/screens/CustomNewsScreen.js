@@ -18,45 +18,64 @@ import { toggleFavorite } from "../redux/favoritesSlice";
 export default function CustomNewsScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const route = useRoute();
-  const { article } = route.params || {}; // Pass the article object as a parameter
+  const { article } = route.params || {}; // Article object passed from previous screen
+
   const favoriteArticles = useSelector(
     (state) => state.favorites.favoriteArticles
   );
-  const isFavourite = favoriteArticles.includes(article.idArticle); // Adjust this according to your article structure
+  const isFavourite = favoriteArticles.some(
+    (favArticle) => favArticle.idArticle === article?.idArticle
+  ); // Correct check
 
   if (!article) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>No Article Details Available</Text>
+        <Text style={styles.articleTitle}>No Article Details Available</Text>
       </View>
     );
   }
 
   const handleToggleFavorite = () => {
-    dispatch(toggleFavorite(article)); // Adjust the action to handle articles
+    dispatch(toggleFavorite(article));
   };
 
   return (
     <ScrollView
       style={styles.container}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent} testID="scrollContent"
+      contentContainerStyle={styles.scrollContent}
+      testID="scrollContent"
     >
       {/* Article Image */}
       <View style={styles.imageContainer} testID="imageContainer">
-      
+        <Image source={{ uri: article.image }} style={styles.articleImage} />
       </View>
-      <View
-        style={styles.topButtonsContainer} testID="topButtonsContainer"
-      >
-       
+
+      {/* Top Buttons */}
+      <View style={styles.topButtonsContainer} testID="topButtonsContainer">
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Text>Back</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleToggleFavorite}
+          style={styles.favoriteButton}
+        >
+          <Text>{isFavourite ? "♥" : "♡"}</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Article Details */}
       <View style={styles.contentContainer} testID="contentContainer">
-      
+        <Text style={styles.articleTitle}>{article.title}</Text>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Content</Text>
+          <Text style={styles.contentText}>{article.description}</Text>
+        </View>
       </View>
     </ScrollView>
   );
@@ -122,7 +141,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   contentText: {
-    fontSize: hp(1.6),
+    fontSize: hp(1.8),
     color: "#4B5563",
+    lineHeight: hp(2.5),
+    textAlign: "justify",
   },
 });
